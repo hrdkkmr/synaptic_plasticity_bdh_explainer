@@ -95,10 +95,10 @@ export default function App() {
             </p>
           </div>
           <div className="hero-what">
-            <div><b>1 · What is plasticity?</b><span>Activity briefly changes a connection’s state.</span></div>
-            <div><b>2 · What is remembered?</b><span>The fact that RED and LEMON recently fired together.</span></div>
-            <div><b>3 · What holds it?</b><span>A temporary value F living on the synapse itself.</span></div>
-            <div><b>4 · What will you see?</b><span>The memory change a prediction — and then fade away.</span></div>
+            <div><b>1 · What is plasticity?</b><span>Recent activity temporarily changes the strength of a connection between neurons.</span></div>
+            <div><b>2 · What is remembered?</b><span>When RED and LEMON are repeatedly active together, their correlation leaves a temporary trace.</span></div>
+            <div><b>3 · What holds it?</b><span>The memory is not a new permanent parameter. It lives in the temporary synaptic state F.</span></div>
+            <div><b>4 · What will you see?</b><span>After teaching, the temporary trace makes LEMON more likely when RED is probed.</span></div>
           </div>
           <button type="button" className="btn btn-primary hero-cta" onClick={scrollToExperiment}>
             Start the experiment ↓
