@@ -145,11 +145,28 @@ sub { font-size: 0.68em; }
   padding: 10px 14px; margin: 0; font-size: 14.5px;
 }
 .arch-disclaimer { font-size: 12.5px; color: var(--ink3); margin-top: 16px; max-width: 860px; }
+.arch-qualifier {
+  margin-top: 14px; max-width: 860px; font-size: 13px; font-weight: 600; color: var(--ink2);
+  border-left: 3px solid var(--line2); padding: 2px 0 2px 12px;
+}
 .bdh-note {
   margin-top: 18px; background: var(--surface2); border: 1px solid var(--line);
   border-radius: var(--r-sm); padding: 12px 16px; color: var(--ink2); font-size: 14.5px;
   max-width: 860px;
 }
+
+/* ---------- BDH comparison — deliberately lightweight ---------- */
+.bdh-cmp {
+  margin-top: 18px; max-width: 860px; border: 1px solid var(--line); border-radius: var(--r-sm);
+  background: var(--surface); padding: 12px 16px 11px;
+}
+.bdh-cmp-k { font-size: 11.5px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink3); margin-bottom: 8px; }
+.bdh-cmp-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 22px; }
+.bdh-cmp-col { display: grid; gap: 4px; align-content: start; padding-left: 12px; border-left: 2px solid var(--line); }
+.bdh-cmp-t { font-size: 13px; font-weight: 700; color: var(--ink); }
+.bdh-cmp-flow { font-size: 13px; color: var(--ink2); display: flex; flex-wrap: wrap; column-gap: 6px; align-items: center; }
+.bdh-cmp-flow i { color: var(--line2); font-style: normal; }
+.bdh-cmp-note { margin: 10px 0 0; font-size: 13px; color: var(--ink3); border-top: 1px dashed var(--line); padding-top: 8px; }
 
 /* ---------- experiment band ---------- */
 .experiment-band {
@@ -205,12 +222,17 @@ sub { font-size: 0.68em; }
 .srow { margin-bottom: 10px; }
 .srow-head { display: flex; align-items: baseline; gap: 8px; }
 .srow-sym { font-family: var(--serif); font-style: italic; font-weight: 700; font-size: 16px; min-width: 18px; }
+.srow-kind { font-size: 10px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink3); }
 .srow-label { font-size: 13.5px; color: var(--ink2); font-weight: 600; }
 .srow-val { margin-left: auto; font-weight: 700; font-size: 14px; }
 .srow-bar { height: 9px; background: #e8edf2; border-radius: 6px; overflow: hidden; margin-top: 4px; }
+.srow-bar.gbar { display: flex; }
+.srow-bar .srow-fill + .srow-fill { border-radius: 0 6px 6px 0; }
 .srow-fill { height: 100%; border-radius: 6px; transition: width 0.5s cubic-bezier(0.22, 0.61, 0.36, 1); }
 .srow-note { font-size: 11.5px; color: var(--ink3); margin-top: 2px; }
+.srow-note.hot { color: var(--green-deep); font-weight: 700; }
 .frow { background: var(--green-soft); border: 1px solid #d5ead9; border-radius: var(--r-sm); padding: 8px 10px 6px; margin: 0 -4px 10px; }
+.frow .srow-kind { color: var(--green-deep); }
 .synceq {
   font-family: var(--mono); font-variant-numeric: tabular-nums; font-size: 12.5px;
   background: var(--surface); border: 1px dashed var(--line2); border-radius: var(--r-sm);
@@ -257,6 +279,11 @@ sub { font-size: 0.68em; }
 .btn-blue { background: var(--blue-bright); border-color: var(--blue-bright); color: #fff; }
 .btn-blue:hover:not(:disabled) { background: var(--blue); border-color: var(--blue); color: #fff; }
 .btn-quiet { background: var(--surface2); }
+.ctl-hint { margin: 0; font-size: 12.5px; color: var(--ink3); line-height: 1.5; }
+.ctl-hint b { color: var(--ink2); font-weight: 700; }
+.ctl-scale { display: grid; gap: 0; font-size: 10.5px; color: var(--ink3); }
+.ctl-scale-row { display: flex; justify-content: space-between; line-height: 1.4; }
+.ctl-scale-life { color: var(--ink2); font-weight: 700; border-top: 1px solid var(--line); padding-top: 1px; margin-top: 1px; }
 
 .ctl-slider { display: grid; gap: 5px; }
 .ctl-head { display: flex; align-items: baseline; gap: 7px; font-size: 13px; }
@@ -396,8 +423,20 @@ input[type='range']::-moz-range-thumb {
     width: auto; max-height: 62vh; overflow: auto;
   }
   .experiment-band { padding: 18px 14px; }
+  .btn { padding: 11px 16px; }
   .verdict-v { font-size: 21px; }
   .exp-statebar { gap: 6px 14px; }
+  /* comparisons stack vertically on small screens */
+  .bdh-cmp-cols { grid-template-columns: 1fr; }
+  .syncard-hl { width: 100%; }
+  /* tooltips: narrower, and control-row tips anchored inward so they never
+     push a hidden 250px box past the viewport edge */
+  .infotip-pop { width: min(250px, 72vw); }
+  .ctl-head .infotip-pop { left: auto; right: -6px; transform: translateY(3px); }
+  .ctl-head .infotip-pop::after { left: auto; right: 12px; transform: none; }
+  .ctl-head .infotip:hover .infotip-pop,
+  .ctl-head .infotip-btn:focus-visible + .infotip-pop,
+  .ctl-head .infotip:focus-within .infotip-pop { transform: translateY(0); }
   .exp-replay { margin-left: 0; }
 }
 @media (max-width: 480px) {
@@ -411,4 +450,5 @@ input[type='range']::-moz-range-thumb {
   .probe-pulse, .write-pulse { animation-duration: 0.01s; opacity: 0; }
   .pulse-ring { animation: none; opacity: 0; }
   .srow-fill, .btn, .arch-step, input[type='range']::-webkit-slider-thumb { transition: none; }
+  .net line, .net circle { transition: none; }
 }

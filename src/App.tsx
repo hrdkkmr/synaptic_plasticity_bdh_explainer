@@ -108,15 +108,14 @@ export default function App() {
         {/* ================= BDH ORIENTATION ================= */}
         <Section id="bdh" kicker="Context first" title="Where does this fit in BDH?">
           <p className="sec-lede">
-            The mechanism you are about to play with is not invented for this demo — it is a scaled-down cousin of how{' '}
-            <b>Dragon Hatchling (BDH)</b>, a published language-model architecture, carries its working memory during inference. Click any level of
-            the map to zoom in.
+            The mechanism you are about to play with is not invented for this demo — it is one idea borrowed from{' '}
+            <b>Dragon Hatchling (BDH)</b>, a published language-model architecture. The map below shows how the pieces relate; click any level to
+            zoom in.
           </p>
           <Architecture />
           <p className="bdh-note">
-            BDH uses synaptic plasticity during inference as a mechanism for temporary, activity-dependent state. This explainer isolates that idea
-            in a much smaller model so the learner can see the mechanism directly. <b>BDH concept ≠ our educational toy</b> — the toy is 6×6
-            synapses, uniform parameters, and none of BDH’s trained machinery.
+            This explainer isolates one mechanism used in BDH: <b>activity-dependent synaptic state contributing to working memory during
+            inference</b>. The toy is a small educational model of that idea — not an implementation of BDH.
           </p>
         </Section>
 

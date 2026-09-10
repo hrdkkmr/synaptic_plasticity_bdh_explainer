@@ -220,11 +220,34 @@ export function SynapseCard({ session, showEquation }: { session: LabSession; sh
   const lam = snap.params.lambda
   const gam = snap.params.gamma
   const halfLife = lam > 0 ? Math.log(0.5) / Math.log(1 - lam) : Infinity
+  // real, per-step state: was this exact synapse just written? is F gone?
+  const justWritten = d?.kind === 'teach' && d.write > 0
+  const fGone = f <= 0.005
 
-  const steps: { sym: string; label: string; tip: string; v: number; max: number; color: string; note: string }[] = [
-    { sym: 'W', label: 'long-term weight', tip: 'W is the connection’s long-term strength, set before the experiment. In this toy it never changes — treat it as frozen wiring.', v: w, max: 1.2, color: '#64748b', note: 'frozen' },
-    { sym: 'F', label: 'temporary state', tip: 'F is the temporary part of the synapse. Correlated activity writes into it, and every quiet tick multiplies it by (1 − λ). It is the short-lived memory.', v: f, max: 1.5, color: '#16a34a', note: 'the memory' },
-    { sym: 'G', label: 'effective strength', tip: 'G = W + F is what the network actually reads. Changing F changes G, so the same wiring computes something different.', v: g, max: 2.0, color: '#334155', note: 'what the net reads' },
+  // W = the permanent component, F = the temporary component, G = W + F the
+  // effective connection. Every value reads live snapshot state; the notes
+  // under the bars change with the real step that just happened.
+  const steps: { sym: string; kind: string; tip: string; v: number; max: number; color: string; note: string; hot?: boolean }[] = [
+    { sym: 'W', kind: 'permanent', tip: 'Stable connection component in this toy model.', v: w, max: 1.2, color: '#64748b', note: 'unchanged' },
+    {
+      sym: 'F',
+      kind: 'temporary',
+      tip: 'Temporary activity-dependent synaptic state.',
+      v: f,
+      max: 1.5,
+      color: '#16a34a',
+      note: justWritten ? 'just written — decays from here' : fGone ? '→ 0 · memory gone' : 'decays every quiet tick',
+      hot: justWritten,
+    },
+    {
+      sym: 'G',
+      kind: 'effective · W + F',
+      tip: 'Effective connection used by the toy model: G = W + F.',
+      v: g,
+      max: 2.0,
+      color: '#334155',
+      note: fGone ? '≈ W — no temporary boost' : 'what the net reads: gray W + green F',
+    },
   ]
 
   return (
@@ -234,21 +257,29 @@ export function SynapseCard({ session, showEquation }: { session: LabSession; sh
           Synapse <b>{CUES[cue]} → {ITEMS[item]}</b>
         </span>
         <span className="syncard-hl">
-          λ = <Lnum>{fmt(lam, 2)}</Lnum> · half-life ≈ <Lnum>{Number.isFinite(halfLife) ? fmt(halfLife, 1) : '∞'}</Lnum> quiet ticks
+          λ (decay rate) = <Lnum>{fmt(lam, 2)}</Lnum> · memory half-life ≈ <Lnum>{Number.isFinite(halfLife) ? fmt(halfLife, 1) : '∞'}</Lnum> quiet ticks
         </span>
       </div>
       {steps.map((s) => (
         <div key={s.sym} className={`srow${s.sym === 'F' ? ' frow' : ''}`}>
           <div className="srow-head">
             <span className="srow-sym" style={{ color: s.color }}>{s.sym}</span>
-            <span className="srow-label">{s.label}</span>
+            <span className="srow-kind">{s.kind}</span>
             <InfoTip symbol={s.sym} text={s.tip} />
             <span className="srow-val"><Lnum>{fmt(s.v, 2)}</Lnum></span>
           </div>
-          <div className="srow-bar">
-            <div className="srow-fill" style={{ width: `${Math.min(100, (s.v / s.max) * 100)}%`, background: s.color }} />
+          <div className={`srow-bar${s.sym === 'G' ? ' gbar' : ''}`}>
+            {s.sym === 'G' ? (
+              // G drawn as its two real components side by side: frozen W (gray) + temporary F (green)
+              <>
+                <div className="srow-fill" style={{ width: `${Math.min(100, (w / s.max) * 100)}%`, background: '#64748b' }} />
+                <div className="srow-fill" style={{ width: `${Math.min(100, (f / s.max) * 100)}%`, background: '#16a34a' }} />
+              </>
+            ) : (
+              <div className="srow-fill" style={{ width: `${Math.min(100, (s.v / s.max) * 100)}%`, background: s.color }} />
+            )}
           </div>
-          <div className="srow-note">{s.note}</div>
+          <div className={`srow-note${s.hot ? ' hot' : ''}`}>{s.note}</div>
         </div>
       ))}
       {showEquation && d && d.kind !== 'gate' && (
@@ -284,7 +315,7 @@ export function Verdict({ session }: { session: LabSession }) {
   const exp = session.expectedFor(ro.cue)
   const ok = exp === null || ro.winner === exp
   return (
-    <div className={`verdict ${ok ? 'v-ok' : 'v-bad'}`} data-testid="verdict">
+    <div className={`verdict ${ok ? 'v-ok' : 'v-bad'}`} data-testid="verdict" role="status">
       <div className="verdict-half">
         <span className="verdict-k">Expected</span>
         <span className="verdict-v">{exp !== null ? ITEMS[exp] : '—'}</span>
@@ -298,8 +329,10 @@ export function Verdict({ session }: { session: LabSession }) {
       </div>
       <div className="verdict-note">
         {ok
-          ? `The model answers LEMON because F still gives this synapse the lead.`
-          : `W never changed — F decayed, so the synapse lost its temporary advantage.`}{' '}
+          ? exp !== null
+            ? `The model answers ${ITEMS[ro.winner]} because F still gives this synapse the lead.`
+            : 'Answering from its current wiring G = W + F.'
+          : 'W never changed — F decayed, so the synapse lost its temporary advantage.'}{' '}
         <span className="dim">p({ITEMS[ro.winner]}) = {(ro.probs[ro.winner] * 100).toFixed(0)}%</span>
       </div>
     </div>
@@ -343,6 +376,9 @@ export function Controls({
           </button>
         )}
       </div>
+      <p className="ctl-hint">
+        The experiment: <b>Teach</b> → <b>Probe RED</b> → adjust <b>λ</b> → <b>quiet ticks</b> → <b>Probe RED</b> again. Watch F rise, then fade.
+      </p>
       <div className="ctl-knobs">
         <label className="ctl-slider">
           <span className="ctl-head">
@@ -351,7 +387,7 @@ export function Controls({
             <span className="ctl-val"><Lnum>{fmt(gam, 2)}</Lnum></span>
             <InfoTip
               symbol="γ"
-              text="γ sets how strongly one co-activation writes temporary state F. Higher γ means the same lesson leaves a deeper trace — too small and the memory never gets started."
+              text="Write strength. γ controls the strength of the activity-dependent write: larger γ makes each co-activation write more into F."
             />
           </span>
           <input
@@ -370,14 +406,11 @@ export function Controls({
             <span className="ctl-sym">λ</span>
             <span className="ctl-name">decay rate</span>
             <span className="ctl-val"><Lnum>{fmt(lam, 2)}</Lnum></span>
-            <InfoTip
-              symbol="λ"
-              text="λ is the decay rate of temporary synaptic state F. A larger λ means more of F is lost on each quiet tick, so the memory disappears faster."
-            />
+            <InfoTip symbol="λ" text="Decay rate. Larger λ makes temporary memory disappear faster." />
           </span>
           <input
             type="range"
-            aria-label="λ — decay rate"
+            aria-label="λ — decay rate: larger λ makes temporary memory disappear faster"
             min={0}
             max={0.5}
             step={0.01}
@@ -385,6 +418,17 @@ export function Controls({
             onChange={(e) => session.setLambda(parseFloat(e.target.value))}
             style={{ ['--p' as string]: `${(lam / 0.5) * 100}%` }}
           />
+          {/* live reading of the same λ the engine uses: low → long memory lifetime, high → short */}
+          <span className="ctl-scale" aria-hidden>
+            <span className="ctl-scale-row">
+              <span>low</span>
+              <span>high</span>
+            </span>
+            <span className="ctl-scale-row ctl-scale-life">
+              <span>memory lifetime: long</span>
+              <span>short</span>
+            </span>
+          </span>
         </label>
       </div>
     </div>
