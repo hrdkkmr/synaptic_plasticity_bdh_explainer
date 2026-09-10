@@ -54,19 +54,26 @@ checkpoint.
 
 ---
 
-## 3. AI-Assisted Content
+## AI assistance disclosure
 
-AI assistance was used to help draft or refine portions of:
+AI tools were used during development for:
 
-- explanatory copy;
-- README documentation;
-- project documentation;
-- research-summary wording;
-- UI labels;
-- educational descriptions.
+- conceptual exploration and discussion of synaptic plasticity, working memory, BDH, and related literature;
+- UI and interaction design ideation;
+- implementation and refactoring guidance;
+- debugging and code-review assistance;
+- accessibility and explanatory wording;
+- README, concept-summary, provenance, and disclosure drafting.
 
-The team reviewed the final wording and is responsible for the claims
-presented in the submission.
+AI-generated suggestions were reviewed and adapted by the project team. Final decisions about the scientific scope, educational abstraction, implementation, experiments, claims, and presentation were made by the project team.
+
+AI tools were not treated as primary scientific sources. Scientific claims were checked against the cited research papers listed in `references.md`.
+
+The simulation is deterministic and project-created. It does not use proprietary training data, external user data, or pretrained model weights.
+
+All visual elements in the explainer are generated through the project's React/CSS/SVG/programmatic rendering. No third-party copyrighted illustrations or photographs are required by the simulation.
+
+The project is an independent educational implementation and is not an official BDH implementation, publication, or affiliated/endorsed artifact.
 
 ---
 
@@ -82,20 +89,27 @@ application, their source and license are recorded in `PROVENANCE.md`.
 
 ---
 
-## 5. Research and References
+## Research sources and scientific basis
 
-The project uses published research to support technical claims.
+The project draws on five primary research sources listed in `references.md`:
 
-Primary sources include:
+1. Kosowski et al. (2025) — Dragon Hatchling (BDH), including inference-time working memory through activity-dependent synaptic plasticity.
+2. Mehta et al. (2024) — biological and computational perspectives relevant to learning and memory.
+3. Zheng et al. (2024) — research relevant to synaptic plasticity and memory mechanisms.
+4. Engdahl et al. (2026) — BDH-CQ and related continuation of the BDH research direction.
+5. Rodriguez, Guo & Moraitis (2022) — short-term plasticity / synaptic state mechanisms.
 
-- Kosowski et al. (2025), *The Dragon Hatchling: The Missing Link
-  between the Transformer and Models of the Brain*.
-- Mehta et al. (2024), *Model-based inference of synaptic plasticity
-  rules*.
-- Zheng et al. (2024), *Rapid context inference in a thalamocortical
-  model using recurrent neural networks*.
-- Engdahl et al. (2026), *BDH-CQ: In-Context Learning with Recurrent
-  Latent Reasoning*.
+Research papers are used as scientific evidence for the concepts and claims stated in the explainer. The project does not claim to reproduce the full models, experiments, or architectures described in these papers.
+
+In particular, the following are educational abstractions created for this project:
+
+- `W` as a relatively stable connection component.
+- `F` as a temporary activity-dependent synaptic state.
+- `G = W + F` as the effective connection used by the toy model.
+- `F(t+1) = γ·(x ⊗ h) + (1 − λ)·F(t)` as the deterministic update rule.
+- The RED → LEMON association and APPLE fallback experiment.
+
+These equations and variables should not be interpreted as official BDH equations or as a complete biological model of synaptic plasticity.
 
 Full references and the specific role of each source are documented in
 `REFERENCES.md`.
