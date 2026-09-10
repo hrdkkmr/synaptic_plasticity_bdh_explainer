@@ -23,7 +23,7 @@ const NODES: ArchNode[] = [
     title: 'BDH — Dragon Hatchling',
     sub: 'a language-model architecture',
     detail:
-      'Dragon Hatchling (BDH) is a published LLM architecture that runs as local interactions between neuron sites. Its working memory during inference lives on the connections, not in a separate memory module. This is the system our explainer borrows one idea from.',
+      'Dragon Hatchling (BDH) is a published LLM architecture that runs as local interactions between neuron sites. Its working memory during inference relies on synaptic plasticity associated with the connections. This is the system our explainer borrows one idea from.',
   },
   {
     id: 'neurons',

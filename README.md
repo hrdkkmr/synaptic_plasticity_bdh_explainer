@@ -2,6 +2,14 @@
 
 > An interactive educational explainer showing how recent neural activity can be stored as temporary synaptic state, influence a later prediction, and fade with inactivity.
 
+## The claim
+
+Recent correlated activity can be stored as temporary synaptic
+state F. That state changes effective connection strength
+G = W + F and can influence later computation until it decays.
+
+## Try it
+
 **Live Demo:** [synaptic-plasticity-bdh-explainer.vercel.app](https://synaptic-plasticity-bdh-explainer.vercel.app/?utm_source=chatgpt.com)
 
 ---

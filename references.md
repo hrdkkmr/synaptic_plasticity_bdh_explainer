@@ -164,6 +164,45 @@ The two mechanisms should be treated as related but distinct.
 
 ---
 
+## [5] Short-Term Plasticity Neurons — Computational synaptic memory
+
+**Rodriguez, H. G., Guo, Q., & Moraitis, T. (2022).
+Short-Term Plasticity Neurons Learning to Learn and Forget.**
+
+Proceedings of the 39th International Conference on Machine Learning (ICML),
+
+PMLR 162, 18704–18722.
+
+[https://proceedings.mlr.press/v162/rodriguez22b.html](https://proceedings.mlr.press/v162/rodriguez22b.html)
+
+### What this source supports
+
+This work introduces Short-Term Plasticity Neurons (STPNs), computational
+neural units in which synapses maintain a dynamic state that evolves over
+time. The resulting synaptic state can support short-term learning and
+forgetting, providing a computational example of memory stored in
+time-varying synaptic dynamics.
+
+### Used in this project for
+
+- Supporting the computational framing of synaptic state as a form of
+  temporary, decaying memory.
+- Motivating the use of an explicit activity-dependent synaptic state
+  that changes over time and can subsequently decay.
+- Providing prior research context for the toy plasticity mechanism
+  demonstrated in this explainer.
+
+### Important distinction
+
+STPNs are **not** implemented in this project.
+The RED → LEMON experiment is an independently implemented,
+deterministic educational reduction using its own simplified write and
+decay rule. It is designed to make the idea of temporary synaptic state
+observable and should not be interpreted as a reproduction of the STPN
+architecture or experiments.
+
+---
+
 # Citation usage in the project
 
 Technical claims in the learner-facing README and concept summary
