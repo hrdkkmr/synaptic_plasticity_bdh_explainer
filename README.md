@@ -1,61 +1,124 @@
 # Synaptic Plasticity as Short-Term Memory
 
-> An interactive explainer showing how **temporary synaptic plasticity can act as short-term memory**, inspired by the neuron–synapse formulation of Dragon Hatchling (BDH).
+> An interactive educational explainer showing how recent neural activity can be stored as temporary synaptic state, influence a later prediction, and fade with inactivity.
+
+**Live Demo:** [synaptic-plasticity-bdh-explainer.vercel.app](https://synaptic-plasticity-bdh-explainer.vercel.app/?utm_source=chatgpt.com)
 
 ---
 
-## 🔗 Links
+## 1. The Core Idea
 
-| Resource | Link |
-|---|---|
-| 🚀 **Live Demo** | **[ADD LIVE DEMO LINK HERE]** |
-| 💻 **Source Code** | https://github.com/hrdkkmr/synaptic_plasticity_bdh_explainer |
-| 📄 **Concept Summary** | `[ADD PDF LINK HERE]` |
-| 🎥 **Demo Video** | `[ADD VIDEO LINK HERE]` |
+### Synaptic plasticity can turn recent activity into temporary computational state.
 
----
-
-## 🧠 What is this?
-
-Neural networks need mechanisms for retaining information while processing a sequence of inputs.
-
-This project explores one specific idea:
-
-> **Recent correlated activity can temporarily modify synaptic state, allowing the network's connections themselves to carry short-term memory.**
-
-The interactive explainer makes this mechanism visible through a simple **RED → LEMON** experiment.
-
-Instead of only showing a final prediction, the learner can observe:
+In this project, a small deterministic toy network demonstrates a simple write–read–forget cycle:
 
 ```text
-Input activity
+Recent activity
       ↓
-Synaptic strengthening
+Synaptic state changes
       ↓
-Temporary state F increases
+Temporary trace is stored in F
       ↓
-Effective connection G changes
+The trace changes the effective connection G
       ↓
-Prediction changes
+A later probe produces a different prediction
       ↓
-Activity stops
+Inactivity causes F to decay
       ↓
-F decays
-      ↓
-Memory fades
+The temporary memory fades
 ```
 
-The goal is to make the causal chain between **activity, synaptic state, computation, and forgetting** directly observable.
+The experiment uses a simple **RED → LEMON** association to make this process directly observable.
+
+The learner can:
+
+1. Teach the network the RED → LEMON association.
+2. Observe the temporary synaptic state `F` increase.
+3. Probe the network and compare the expected answer with its prediction.
+4. Let the network remain idle.
+5. Observe `F` decay.
+6. Probe again and see the prediction change.
+
+The goal is not to simulate a biological brain. The goal is to make one computational idea concrete and reproducible.
 
 ---
 
-# 🎯 Central Claim
+# 2. What This Project Teaches
 
-The project demonstrates the following computational claim:
+The experiment focuses on four ideas:
 
-> **Recent correlated activity can be stored as a temporary synaptic state `F`, changing the effective connection `G = W + F` and influencing later computation until `F` decays.**
+### 1. Activity can modify synaptic state
 
-The model separates the effective connection into:
+Recent activity temporarily changes the strength of a connection.
+
+### 2. The memory can live in the connection
+
+In the toy model, the temporary state `F` stores information about recent activity.
+
+### 3. The state can affect later computation
+
+The temporary trace contributes to the effective connection used by the model and can therefore change its prediction.
+
+### 4. Temporary state can decay
+
+When the activity stops, the temporary trace fades. The association therefore does not behave like permanent learning.
+
+---
+
+# 3. The RED → LEMON Experiment
+
+The central experiment uses three concepts:
+
+```text
+RED      →      LEMON
+                 ↑
+             temporary
+             synaptic trace
+```
+
+Initially, the model has no temporary RED → LEMON memory.
+
+When RED and LEMON are repeatedly activated together:
+
+```text
+RED + LEMON
+     ↓
+plasticity update
+     ↓
+F increases
+```
+
+The resulting temporary state influences the effective connection:
+
+```text
+G = W + F
+```
+
+The model can then use this changed state when RED is probed.
+
+If the network remains idle:
+
+```text
+F → 0
+```
+
+and the temporary association weakens.
+
+---
+
+# 4. The Toy Model
+
+The simulation deliberately uses a small and interpretable model.
+
+It contains:
+
+- 6 cue units
+- 6 item units
+- a relatively stable connection state `W`
+- a temporary synaptic state `F`
+- an effective connection state `G`
+
+The model represents the effective connection as:
 
 ```text
 G = W + F
@@ -63,11 +126,17 @@ G = W + F
 
 where:
 
-- `W` = relatively stable connection component
-- `F` = temporary activity-dependent synaptic state
-- `G` = effective connection used by the computation
+- `W` represents relatively stable connection state;
+- `F` represents temporary activity-dependent synaptic state;
+- `G` represents the effective connection used by the toy model.
 
-The temporary state evolves according to a simplified Hebbian-style update:
+The temporary state starts at:
+
+```text
+F(0) = 0
+```
+
+and is updated using:
 
 ```text
 F(t+1) = γ · (x ⊗ h) + (1 − λ) · F(t)
@@ -75,77 +144,99 @@ F(t+1) = γ · (x ⊗ h) + (1 − λ) · F(t)
 
 where:
 
-- `x` = current input activity
-- `h` = interacting neuron activity
-- `γ` = write / learning strength
-- `λ` = decay / forgetting rate
+- `x` = current cue/activity pattern;
+- `h` = current item/activity pattern;
+- `x ⊗ h` = activity-dependent outer product;
+- `γ` = strength of the plasticity write;
+- `λ` = decay/forgetting parameter;
+- `F` = temporary synaptic state.
 
-Repeated activity writes information into `F`.
+### Important
 
-When activity stops, `F` decays.
+These equations are an **educational abstraction created for this project**.
 
-This gives the system a temporary memory trace without requiring the stable component `W` to be permanently rewritten.
-
----
-
-# 🔴 → 🍋 The Experiment
-
-The entire learning experience is centered around a simple association:
-
-```text
-RED  →  LEMON
-```
-
-## 1. Teach
-
-The learner activates the RED pattern.
-
-Repeated correlated activity strengthens the relevant temporary synaptic state.
-
-```text
-RED activation
-      ↓
-Hebbian update
-      ↓
-F increases
-      ↓
-RED → LEMON connection strengthens
-```
+They are not presented as the complete equations of BDH or as a complete biological model of synapses.
 
 ---
 
-## 2. Probe
+# 5. Why Separate `W` and `F`?
 
-The learner asks the system to retrieve the associated concept.
+The separation makes the distinction between stable knowledge and temporary memory visible.
 
-The explainer compares the expected answer with the model's output:
+```text
+W = relatively stable state
+
+F = temporary activity-dependent state
+
+G = W + F
+```
+
+The experiment keeps `W` fixed while allowing `F` to change.
+
+This means that after the temporary trace decays, the underlying stable state has not been rewritten.
+
+The learner can therefore see the difference between:
+
+**learning something permanently**
+
+and
+
+**temporarily changing the state of a connection.**
+
+---
+
+# 6. The Write → Read → Forget Cycle
+
+The entire experiment can be understood as three stages.
+
+## WRITE
+
+Teach the association:
+
+```text
+RED + LEMON
+```
+
+Repeated co-activation increases the temporary synaptic trace.
+
+```text
+F ↑
+```
+
+---
+
+## READ
+
+Probe the network with:
+
+```text
+RED
+```
+
+The temporary trace now contributes to the effective connection.
+
+```text
+G = W + F
+```
+
+The model therefore predicts:
 
 ```text
 EXPECTED: LEMON
 MODEL:    LEMON ✓
 ```
 
-The important part is that the learner can see **why** the prediction changed rather than simply receiving a new output.
-
 ---
 
-## 3. Let the memory decay
+## FORGET
 
-The learner stops activating the network.
-
-The temporary synaptic state begins to decay according to `λ`.
+Stop the activity and allow the temporary state to decay.
 
 ```text
 F ↓
 ```
 
-The visual representation of the relevant connection weakens as the temporary memory trace disappears.
-
----
-
-## 4. Probe again
-
-After sufficient decay:
+Eventually the temporary contribution becomes small enough that the model can return to its previous prediction.
 
 ```text
 EXPECTED: LEMON
@@ -154,305 +245,397 @@ MODEL:    APPLE ✕
 
 The expected association has not changed.
 
-What changed is the temporary state that was helping the model retrieve it.
-
-This creates a visible distinction between:
-
-**stable knowledge** and **temporary computational state**.
+The temporary memory has.
 
 ---
 
-# 🧮 The Mathematics
+# 7. Understanding `γ` and `λ`
 
-The explainer introduces the mathematics progressively.
+The experiment exposes two meaningful parameters.
 
-### Step 1 — Temporary synaptic state
+## `γ` — How strongly do we write?
 
-```text
-F
-```
+`γ` controls how strongly recent activity modifies the temporary synaptic state.
 
-`F` represents the activity-dependent state written into the connections.
-
-### Step 2 — Effective connection
+Higher `γ`:
 
 ```text
-G = W + F
+activity → larger update to F
 ```
 
-The temporary state modifies the effective connection used by the computation.
-
-### Step 3 — Update and decay
+Lower `γ`:
 
 ```text
-F(t+1) = γ · (x ⊗ h) + (1 − λ) · F(t)
+activity → smaller update to F
 ```
 
-The two key parameters are:
+---
 
-| Parameter | Role |
+## `λ` — How quickly do we forget?
+
+`λ` controls the decay of the temporary state.
+
+Higher `λ`:
+
+```text
+faster decay
+```
+
+Lower `λ`:
+
+```text
+slower decay
+```
+
+This gives the learner a direct way to investigate the trade-off between writing a temporary memory and retaining it.
+
+---
+
+# 8. Expected vs Model
+
+The experiment deliberately places the expected result beside the model's actual prediction.
+
+### Before decay
+
+```text
+EXPECTED LEMON
+MODEL    LEMON ✓
+```
+
+The temporary synaptic trace successfully supports the learned association.
+
+### After sufficient decay
+
+```text
+EXPECTED LEMON
+MODEL    APPLE ✕
+```
+
+This is intentional.
+
+The mismatch demonstrates that the temporary memory has faded.
+
+The experiment therefore distinguishes:
+
+- what the experiment expects;
+- what the current synaptic state produces.
+
+---
+
+# 9. Where Does This Fit in BDH?
+
+The Dragon Hatchling (BDH) is a biologically inspired neural architecture in which synaptic plasticity plays a role in working memory during inference. The original BDH work describes synaptic changes associated with processed concepts. [1]
+
+This project isolates that **general computational idea** into a much smaller educational experiment.
+
+```text
+                 BDH / biologically inspired
+                 computational architecture
+                           │
+                           │
+                           ▼
+                 Synaptic plasticity
+                           │
+                           │
+                           ▼
+              Temporary synaptic state
+                           │
+                           │
+                    ┌──────┴──────┐
+                    │             │
+                  WRITE          READ
+                    │             │
+                    └──────┬──────┘
+                           │
+                           ▼
+                      PREDICTION
+                           │
+                           ▼
+                         DECAY
+```
+
+### YOU ARE HERE
+
+The interactive project focuses specifically on:
+
+> **activity → temporary synaptic state → changed computation → decay**
+
+### Important scope distinction
+
+This diagram is **conceptual and schematic**.
+
+The project does not implement the full BDH architecture.
+
+It does not reproduce the complete BDH neuron system, training procedure, inference mechanism, scale, or parameterization.
+
+The toy should therefore be understood as an **educational reduction inspired by the synaptic-plasticity concept**, not as BDH itself.
+
+---
+
+# 10. Why This Matters
+
+Transformers commonly expose temporary context through mechanisms such as attention and key-value caching.
+
+Recurrent systems can maintain information through changing hidden states.
+
+This project explores another computational perspective:
+
+> **The state of the connection itself can temporarily carry information about recent activity.**
+
+The important conceptual distinction is:
+
+```text
+Permanent parameter
+       vs
+Temporary synaptic state
+```
+
+The toy makes the latter visible.
+
+Instead of asking the learner to accept that a connection has memory, the experiment lets them:
+
+1. change it;
+2. inspect it;
+3. use it;
+4. wait;
+5. inspect it again.
+
+---
+
+# 11. What This Toy Does — and Does Not — Show
+
+This project intentionally keeps the model small.
+
+## 01 · One rule, not a brain
+
+Real synapses involve many mechanisms and timescales.
+
+This toy keeps one activity-dependent write rule and one decay process so that the mechanism remains visible and understandable.
+
+---
+
+## 02 · Short-term, not permanent
+
+The temporary state `F` decays toward zero.
+
+Nothing in this experiment represents durable learning.
+
+`W` is simply a frozen stand-in for information learned earlier.
+
+---
+
+## 03 · Small and lossy
+
+The toy network has limited capacity.
+
+Multiple associations can interfere with one another, and the behavior of this small system should not be interpreted as a claim about memory capacity in large BDH-scale systems.
+
+---
+
+## 04 · A conceptual cousin of BDH
+
+The toy follows the broad idea of activity-dependent synaptic state associated with the BDH research direction.
+
+It is **not an implementation of BDH**.
+
+It does not reproduce the complete BDH architecture and does not prove anything about biological brains.
+
+---
+
+# 12. Scientific Scope
+
+The project demonstrates a computational mechanism, not a biological conclusion.
+
+Specifically, the experiment demonstrates:
+
+- temporary activity-dependent state;
+- a simple plasticity update;
+- an effective connection influenced by temporary state;
+- memory-dependent prediction;
+- decay of temporary state;
+- interference in a small stateful system.
+
+The project does **not** demonstrate:
+
+- human memory;
+- complete biological synaptic plasticity;
+- a complete model of the brain;
+- the complete BDH architecture;
+- large-scale BDH performance;
+- that the toy equations reproduce biological synapses.
+
+---
+
+# 13. Research Basis
+
+The project is grounded in recent primary research.
+
+### [1] Kosowski et al. (2025)
+
+**The Dragon Hatchling: The Missing Link between the Transformer and Models of the Brain**
+
+arXiv:2509.26507
+
+https://arxiv.org/abs/2509.26507
+
+Primary source for the project's connection to BDH and its use of synaptic plasticity as part of working memory during inference.
+
+---
+
+### [2] Mehta et al. (2024)
+
+**Model-based inference of synaptic plasticity rules**
+
+Advances in Neural Information Processing Systems 37, 48519–48540.
+
+DOI: 10.52202/079017-1537
+
+Primary computational research on modeling and inferring synaptic plasticity rules.
+
+---
+
+### [3] Zheng et al. (2024)
+
+**Rapid context inference in a thalamocortical model using recurrent neural networks**
+
+Nature Communications 15, 8275.
+
+DOI: 10.1038/s41467-024-52289-3
+
+Primary computational research demonstrating how Hebbian plasticity can contribute to rapid context inference.
+
+---
+
+### [4] Engdahl et al. (2026)
+
+**BDH-CQ: In-Context Learning with Recurrent Latent Reasoning**
+
+arXiv:2608.09888
+
+https://arxiv.org/abs/2608.09888
+
+Related work from the BDH research direction. BDH-CQ is treated as a distinct mechanism and is not presented as an implementation of the toy model.
+
+---
+
+Full source descriptions and evidence mapping are available in:
+
+- [`REFERENCES.md`](REFERENCES.md)
+- [`PROVENANCE.md`](PROVENANCE.md)
+- [`DISCLOSURES.md`](DISCLOSURES.md)
+
+---
+
+# 14. Features
+
+### Interactive Synaptic Experiment
+
+- RED → LEMON association
+- Activity-dependent synaptic updates
+- Visible temporary state `F`
+- Effective connection `G`
+- Prediction changes
+- Controlled decay
+- Replayable experiment
+
+### Parameter Exploration
+
+- Adjustable `γ`
+- Adjustable `λ`
+- Immediate feedback from parameter changes
+
+### Educational Visualization
+
+- Visible active pathway
+- Synaptic-strength changes
+- Temporary-state visualization
+- Prediction feedback
+- Expected vs model comparison
+- Guided explanation of the mechanism
+
+### BDH Context
+
+- Conceptual BDH placement
+- Explicit "YOU ARE HERE" marker
+- Clear distinction between the toy and official BDH
+- Research-backed explanation
+
+### Accessibility
+
+- Keyboard-accessible controls
+- Visible focus states
+- Screen-reader-friendly labels
+- `aria-live` feedback where appropriate
+- Reduced-motion support
+
+### Responsive Design
+
+The interface is designed to work across:
+
+- desktop
+- laptop
+- tablet
+- mobile
+
+---
+
+# 15. Technology Stack
+
+| Technology | Purpose |
 |---|---|
-| `γ` | Controls how strongly activity writes into `F` |
-| `λ` | Controls how quickly the temporary trace decays |
+| React | Interactive UI |
+| TypeScript | Application logic and type safety |
+| Vite | Development and production build |
+| CSS | Layout, styling, animation, responsive design |
+| SVG / CSS visualization | Educational visualizations |
+| Vercel | Public deployment |
 
-The learner can manipulate these parameters and observe their effect on memory formation and forgetting.
-
----
-
-# 🧬 Where This Fits in BDH
-
-The project is inspired by the **Dragon Hatchling (BDH)** architecture.
-
-BDH is a biologically inspired neural architecture based on a network of locally interacting neuron particles. The BDH paper describes working memory during inference as relying on synaptic plasticity with Hebbian learning and reports that specific synapses can strengthen when the model processes particular concepts.
-
-A simplified conceptual view is:
-
-```text
-┌─────────────────────────┐
-│     Neuron Activity     │
-└────────────┬────────────┘
-             ↓
-┌─────────────────────────┐
-│ Synaptic Interaction    │
-└────────────┬────────────┘
-             ↓
-┌─────────────────────────┐
-│ Temporary Synaptic      │
-│ State F                 │
-└────────────┬────────────┘
-             ↓
-┌─────────────────────────┐
-│ Effective Connection G  │
-│        G = W + F        │
-└────────────┬────────────┘
-             ↓
-┌─────────────────────────┐
-│ Changed Computation     │
-└─────────────────────────┘
-```
-
-### ⚠️ Important distinction
-
-**This project is not the official BDH implementation.**
-
-It is an independent educational reduction of one mechanism associated with BDH.
-
-The official BDH implementation contains substantially more structure, including its scale-free network organization, locally interacting neuron particles, training procedure, and full computational formulation.
-
-This project intentionally reduces the problem to a tiny, inspectable system so that learners can manipulate the mechanism and observe its state directly.
+The project does not require a backend or external model service for the core experiment.
 
 ---
 
-# 🔬 Why a Toy Model?
+# 16. Project Structure
 
-The purpose of the project is **understanding, not scale**.
-
-A full neural architecture can contain millions or billions of parameters and many interacting components. That makes it difficult to isolate one mechanism.
-
-Our small simulation instead exposes:
-
-- the input activity
-- the relevant synapse
-- the temporary state `F`
-- the effective connection `G`
-- the decay process
-- the resulting prediction
-
-This creates a direct causal relationship:
+A simplified project structure is:
 
 ```text
-Change a variable
-      ↓
-Observe the state change
-      ↓
-Observe the prediction change
-```
-
-The simulation is therefore designed as an educational substrate rather than a reproduction of the full BDH architecture.
-
----
-
-# 🎮 Interactive Controls
-
-The interface intentionally exposes only a small number of meaningful controls.
-
-| Control | What it does |
-|---|---|
-| **Teach / Activate** | Applies the actual learning/update mechanism |
-| **Probe** | Runs the current state and produces a prediction |
-| **Step / Idle** | Advances the simulation and allows temporary state to decay |
-| **Replay** | Resets/replays the experiment |
-| **γ** | Controls synaptic write strength |
-| **λ** | Controls synaptic decay |
-
-Every control is connected to an actual simulation variable or state transition.
-
----
-
-# 👀 What the Learner Sees
-
-The explainer focuses attention on the causal sequence:
-
-### Activity
-
-```text
-RED activates
-```
-
-↓
-
-### Synaptic update
-
-```text
-RED → LEMON
-```
-
-↓
-
-### Temporary memory
-
-```text
-F ↑
-```
-
-↓
-
-### Effective connection
-
-```text
-G = W + F
-```
-
-↓
-
-### Prediction
-
-```text
-LEMON ✓
-```
-
-↓
-
-### Decay
-
-```text
-F ↓
-```
-
-↓
-
-### Prediction after forgetting
-
-```text
-APPLE ✕
-```
-
-This makes the memory mechanism visible at the level of the connection rather than hiding it behind an opaque output.
-
----
-
-# 🧪 Reproducible Learning Sequence
-
-A learner can reproduce the central claim in a few steps:
-
-1. Open the explainer.
-2. Activate **RED → LEMON**.
-3. Repeat the activation and observe `F` increasing.
-4. Probe the network.
-5. Confirm:
-
-   ```text
-   EXPECTED LEMON
-   MODEL LEMON ✓
-   ```
-
-6. Stop activity and let the simulation decay.
-7. Observe the relevant synapse weaken.
-8. Probe again.
-9. Observe the model eventually lose the temporary association.
-10. Change `γ` and `λ` and repeat the experiment.
-
-The learner therefore interacts with the mechanism instead of only reading about it.
-
----
-
-# 🏗️ Architecture of This Project
-
-The application separates the simulation from the learner-facing interface.
-
-```text
-src/
+synaptic-memory-lab/
 │
-├── sim/
-│   ├── engine.ts
-│   ├── runner.ts
-│   ├── metrics.ts
-│   └── presets.ts
+├── README.md
+├── REFERENCES.md
+├── PROVENANCE.md
+├── DISCLOSURES.md
+├── LICENSE
+├── package.json
+├── package-lock.json
 │
-├── ui/
-│   ├── Tour.tsx
-│   ├── Lab.tsx
-│   ├── Sandbox.tsx
-│   ├── Research.tsx
-│   └── useSession.ts
+├── src/
+│   ├── ...
+│   └── ...
 │
-└── App.tsx
+└── docs/
+    └── concept-summary.md
 ```
 
-### Simulation layer
-
-Responsible for:
-
-- state updates
-- synaptic plasticity
-- decay
-- predictions
-- experiment state
-- deterministic behavior
-
-### UI layer
-
-Responsible for:
-
-- interactive visualization
-- learner guidance
-- controls
-- equations
-- expected-vs-model comparison
-- accessibility
-
-Keeping these layers separate helps ensure that the visualization represents actual simulation state rather than manually fabricated animations.
+The exact source structure may vary with subsequent implementation changes.
 
 ---
 
-# 🛠️ Tech Stack
+# 17. Running Locally
 
-- **React**
-- **TypeScript**
-- **Vite**
-- **CSS**
-- Custom deterministic simulation engine
-
-The educational simulation does not require a large ML framework to run.
-
----
-
-# 💻 Running Locally
-
-## Prerequisites
-
-Make sure you have:
+## Requirements
 
 - Node.js
 - npm
-- Git
 
-## Clone the repository
+Check your installation:
 
 ```bash
-git clone https://github.com/hrdkkmr/synaptic_plasticity_bdh_explainer.git
-cd synaptic_plasticity_bdh_explainer
+node --version
+npm --version
 ```
+
+---
 
 ## Install dependencies
 
@@ -460,23 +643,33 @@ cd synaptic_plasticity_bdh_explainer
 npm install
 ```
 
+---
+
 ## Start the development server
 
 ```bash
 npm run dev
 ```
 
-Open the local URL provided by Vite.
+Vite will provide a local development URL, typically:
+
+```text
+http://localhost:5173
+```
+
+Open the URL in a browser.
 
 ---
 
-## Production Build
+## Build for production
 
 ```bash
 npm run build
 ```
 
-## Preview Production Build
+---
+
+## Preview the production build
 
 ```bash
 npm run preview
@@ -484,171 +677,219 @@ npm run preview
 
 ---
 
-# ♿ Accessibility
+# 18. Deployment
 
-The interface is designed to remain usable across different interaction modes.
+The public submission is deployed on Vercel:
 
-The project includes:
+**Live Demo:** [Synaptic Plasticity as Short-Term Memory — Live Demo](https://synaptic-plasticity-bdh-explainer.vercel.app/?utm_source=chatgpt.com)
 
-- keyboard-accessible controls
-- visible focus states
-- semantic interface elements
-- explanatory labels
-- accessible status updates
-- reduced-motion support
-- responsive layouts
-
-Animations are intended to communicate simulation state rather than exist purely for decoration.
+The application is a client-side React/Vite project and does not require a backend service for the core experiment.
 
 ---
 
-# 📱 Responsive Design
+# 19. How to Reproduce the Main Learning Outcome
 
-The explainer is designed for both desktop and smaller screens.
+A learner can reproduce the central claim through the following sequence:
 
-On smaller screens:
+### Step 1 — Start with the prepared experiment
 
-- the educational guide becomes a bottom-sheet style interface
-- controls remain accessible
-- the experiment remains centered on the RED → LEMON relationship
-- technical explanations remain available without requiring desktop-only interaction
+Observe the initial state of the synaptic network.
 
----
+### Step 2 — Teach RED → LEMON
 
-# 🔍 Scientific Scope and Limitations
+Activate the association repeatedly.
 
-This project demonstrates a simplified computational mechanism.
-
-It does **not** claim to reproduce:
-
-- the complete BDH architecture
-- the full BDH training procedure
-- biological human short-term memory
-- all forms of synaptic plasticity
-- the performance characteristics of the official BDH model
-- the complete dynamics of biological neurons or synapses
-
-The RED → LEMON task and simplified equations are intentionally designed for educational transparency.
-
-The correct interpretation is:
-
-> **This is a small interactive model for understanding a synaptic-plasticity mechanism, not a replacement for the full BDH architecture or a biological model of memory.**
-
----
-
-# 📚 Related Research
-
-## Dragon Hatchling / BDH
-
-Kosowski et al. introduce Dragon Hatchling (BDH), a biologically inspired architecture based on locally interacting neuron particles. The paper describes working memory during inference as relying on synaptic plasticity with Hebbian learning and reports strengthening of individual synapses associated with concepts processed by the model.
-
-**Paper:**  
-https://arxiv.org/abs/2509.26507
-
-**Official implementation:**  
-https://github.com/pathwaycom/bdh
-
----
-
-## BDH-CQ
-
-BDH-CQ explores recurrent latent reasoning and in-context learning through recurrent memory. It is relevant as an architectural comparison, but it should not be treated as identical to the specific synaptic-plasticity mechanism demonstrated by this project.
-
-**Paper:**  
-https://arxiv.org/abs/2608.09888
-
----
-
-## Synaptic Plasticity Research
-
-Mehta et al. (NeurIPS 2024) study computational inference of synaptic plasticity rules from neural and behavioral data, providing broader evidence for treating plasticity rules as explicit computational mechanisms.
-
-**Paper:**  
-https://doi.org/10.52202/079017-1537
-
----
-
-# 📖 References
-
-1. Kosowski, A., Uznański, P., Chorowski, J., Stamirowska, Z., & Bartoszkiewicz, M. (2025). **The Dragon Hatchling: The Missing Link between the Transformer and Models of the Brain.** arXiv:2509.26507.  
-   https://arxiv.org/abs/2509.26507
-
-2. Engdahl et al. (2026). **BDH-CQ: In-Context Learning with Recurrent Latent Reasoning.** arXiv:2608.09888.
-
-3. Mehta, Y. et al. (2024). **Model-based inference of synaptic plasticity rules.** NeurIPS 2024, 48519–48540.  
-   https://doi.org/10.52202/079017-1537
-
----
-
-# 📄 Project Documentation
-
-Additional project documentation can include:
-
-- concept summary / submission blog
-- research notes
-- architecture explanation
-- experiment design
-- implementation notes
-- screenshots
-- demo video
-
-These materials should distinguish clearly between:
-
-**research-backed claims → simplified educational model → observations produced by this implementation.**
-
----
-
-# 🤖 AI Assistance Disclosure
-
-AI tools were used during development for selected development and documentation tasks, including:
-
-- brainstorming and interaction design
-- code assistance
-- debugging
-- documentation drafting
-- wording and presentation refinement
-
-The project team reviewed the resulting implementation and is responsible for understanding and defending the final code, technical claims, equations, citations, and behavior of the artifact.
-
----
-
-# 📜 License
-
-Add the project's chosen license here.
-
-For example:
+Observe:
 
 ```text
-MIT License
+F ↑
 ```
 
-If the project uses a different license, replace this section with the exact license and attribution requirements.
+### Step 3 — Probe RED
 
----
+Observe the model's prediction.
 
-# 👤 Project
-
-**Repository:**  
-https://github.com/hrdkkmr/synaptic_plasticity_bdh_explainer
-
-**Live Demo:**  
-
-> 🚀 **[ADD LIVE DEMO LINK HERE]**
-
----
-
-## ⭐ The Takeaway
-
-A connection does not necessarily need to be permanently rewritten to influence what happens next.
-
-Recent activity can leave a temporary trace in the connection itself.
+Expected:
 
 ```text
-Activity writes the trace.
-        ↓
-The network reads the trace.
-        ↓
-Inactivity lets the trace fade.
+LEMON
 ```
 
-**Synaptic plasticity can therefore provide a mechanism for short-term computational memory.**
+### Step 4 — Let the system decay
+
+Stop the activity and allow the temporary state to weaken.
+
+Observe:
+
+```text
+F ↓
+```
+
+### Step 5 — Probe again
+
+The model may now return to its previous prediction.
+
+The key observation is:
+
+> The temporary memory changed the computation without changing the stable state.
+
+---
+
+# 20. Design Principles
+
+The project was designed around a small number of educational principles.
+
+### One precise claim
+
+The experiment focuses on one idea rather than attempting to explain all of neuroscience or BDH.
+
+### Visible state
+
+The learner can see the temporary state that changes during the experiment.
+
+### Truth beside estimate
+
+Expected output and model output are shown together.
+
+### Manipulable variable
+
+The learner can change parameters such as `λ` and `γ`.
+
+### Fast feedback
+
+Changes should be visible immediately after meaningful interactions.
+
+### Honest abstraction
+
+The project explicitly distinguishes the toy model from biological systems and the complete BDH architecture.
+
+### Progressive disclosure
+
+The explanation moves from:
+
+```text
+intuition
+   ↓
+visual state
+   ↓
+F
+   ↓
+G = W + F
+   ↓
+full update rule
+```
+
+rather than introducing the complete mathematical model immediately.
+
+---
+
+# 21. Limitations
+
+This project is intentionally a toy model.
+
+Its main limitations are:
+
+- very small network size;
+- simplified plasticity rule;
+- simplified decay mechanism;
+- fixed stable state `W`;
+- no biological synaptic mechanisms;
+- no spiking-neuron simulation;
+- no complete BDH implementation;
+- limited memory capacity;
+- possible interference between associations;
+- no claim about human cognition.
+
+These limitations are part of the educational design rather than hidden implementation details.
+
+---
+
+# 22. AI Assistance Disclosure
+
+AI tools were used during development for activities including:
+
+- conceptual exploration;
+- UI and interaction design;
+- documentation drafting;
+- explanatory copy;
+- implementation/refactoring guidance;
+- debugging assistance;
+- discussion of research concepts.
+
+All final technical claims, implementation decisions, citations, and project materials were reviewed by the project team.
+
+AI-generated material is not treated as scientific evidence.
+
+Full disclosure is available in:
+
+[`DISCLOSURES.md`](DISCLOSURES.md)
+
+---
+
+# 23. Provenance and Licensing
+
+Information about:
+
+- source code;
+- research sources;
+- data;
+- model weights;
+- graphics;
+- fonts;
+- third-party dependencies;
+- BDH attribution;
+- licenses
+
+is documented in:
+
+[`PROVENANCE.md`](PROVENANCE.md)
+
+The project license is provided in:
+
+[`LICENSE`](LICENSE)
+
+---
+
+# 24. Documentation
+
+| Document | Purpose |
+|---|---|
+| `README.md` | Project overview and usage |
+| `REFERENCES.md` | Research sources and evidence mapping |
+| `PROVENANCE.md` | Code, data, asset, font, and license provenance |
+| `DISCLOSURES.md` | AI assistance and external-material disclosure |
+| `LICENSE` | Project licensing |
+
+---
+
+# 25. Project Takeaway
+
+The experiment reduces a complex idea to one observable mechanism:
+
+```text
+ACTIVITY
+   ↓
+WRITE
+   ↓
+TEMPORARY SYNAPTIC STATE
+   ↓
+READ
+   ↓
+CHANGED PREDICTION
+   ↓
+DECAY
+   ↓
+FORGET
+```
+
+The central lesson is:
+
+> **Synaptic plasticity can turn recent activity into temporary computational state: activity writes the trace, the network reads it, and inactivity lets it fade.**
+
+The project deliberately stops there.
+
+It does not claim to have built a brain.
+
+It does not claim to have rebuilt BDH.
+
+It provides a small, inspectable substrate through which a learner can see one important computational idea happen.
