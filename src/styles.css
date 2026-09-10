@@ -314,6 +314,7 @@ input[type='range']::-moz-range-thumb {
 .trace-empty { padding: 14px 4px; font-size: 13.5px; }
 
 /* ---------- recap / limits / takeaway ---------- */
+
 .recap { margin: 10px 0 0; padding: 0 0 22px; max-width: 780px; }
 .recap li { margin: 9px 0; color: var(--ink2); font-size: 16px; }
 .recap b { color: var(--ink); }

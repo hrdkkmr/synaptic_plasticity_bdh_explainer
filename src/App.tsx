@@ -166,51 +166,22 @@ export default function App() {
         </Section>
 
         {/* ================= LIMITATIONS ================= */}
-        <Section
-  id="limitations"
-  kicker="Scope & limitations"
-  title="What this toy does — and does not — show"
->
+<Section id="limitations" kicker="Scope & limitations" title="What this toy does — and does not — show">
   <p className="section-intro">
-    This experiment isolates one idea: recent activity can temporarily
-    modify synaptic state and influence a later prediction.
+    This experiment isolates one idea: recent activity can temporarily modify synaptic state and influence a later prediction.
   </p>
 
   <ol className="limitations-list">
-    <li>
-      <b>One rule, not a brain.</b>{" "}
-      Real synapses involve many mechanisms and timescales. This toy keeps
-      one activity-dependent write rule and one decay process.
-    </li>
-
-    <li>
-      <b>Short-term, not permanent.</b>{" "}
-      The temporary state <i>F</i> decays toward zero. Nothing here is
-      durable learning; <i>W</i> is simply a frozen stand-in for information
-      learned earlier.
-    </li>
-
-    <li>
-      <b>Small and lossy.</b>{" "}
-      This tiny network has limited capacity. Multiple associations can
-      interfere with one another, so its behavior should not be interpreted
-      as a claim about memory capacity in large BDH systems.
-    </li>
-
-    <li>
-      <b>A conceptual cousin of BDH.</b>{" "}
-      The toy follows the same broad idea of activity-dependent synaptic
-      state, but it is not an implementation of BDH and does not reproduce
-      the full architecture.
-    </li>
+    <li><b>One rule, not a brain.</b> Real synapses involve many mechanisms and timescales. This toy keeps one activity-dependent write rule and one decay process.</li>
+    <li><b>Short-term, not permanent.</b> The temporary state <i>F</i> decays toward zero. Nothing here is durable learning; <i>W</i> is simply a frozen stand-in for information learned earlier.</li>
+    <li><b>Small and lossy.</b> This tiny network has limited capacity. Multiple associations can interfere with one another, so its behavior should not be interpreted as a claim about memory capacity in large BDH systems.</li>
+    <li><b>A conceptual cousin of BDH.</b> The toy follows the same broad idea of activity-dependent synaptic state, but it is not an implementation of BDH and does not reproduce the full architecture.</li>
   </ol>
 
   <div className="limitation-note">
-    <strong>Important:</strong> This experiment demonstrates a computational
-    mechanism, not how human memory works. It is an educational reduction
-    designed to make one idea observable.
+    <strong>Important:</strong> This experiment demonstrates a computational mechanism, not how human memory works. It is an educational reduction designed to make one idea observable.
   </div>
-        </Section>
+</Section>
 
         {/* ================= TAKEAWAY ================= */}
         <section className="takeaway" id="takeaway">
